@@ -8,8 +8,16 @@ import com.alonisos.roomApp.model.host.HostDMO;
 import com.alonisos.roomApp.model.host.HostRepository;
 import com.alonisos.roomApp.model.hub.HubDMO;
 import com.alonisos.roomApp.model.hub.HubRepository;
+import com.alonisos.roomApp.model.offeredService.OfferedServiceDMO;
+import com.alonisos.roomApp.model.offeredService.OfferedServiceRepository;
+import com.alonisos.roomApp.model.offeredService.ServiceTypeDMO;
+import com.alonisos.roomApp.model.offeredService.ServiceTypeRepository;
 import com.alonisos.roomApp.model.room.RoomDMO;
 import com.alonisos.roomApp.model.room.RoomRepository;
+import com.alonisos.roomApp.model.roomService.RoomServiceDMO;
+import com.alonisos.roomApp.model.roomService.RoomServiceRepository;
+import com.alonisos.roomApp.model.vehicle.VehicleTypeDMO;
+import com.alonisos.roomApp.model.vehicle.VehicleTypeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -42,6 +50,16 @@ public class SimpleDBIntegrationTest extends DatabaseTest {
     @Autowired
     private ReservationStatusRepository reservationStatusRepository;
 
+    @Autowired
+    private ServiceTypeRepository serviceTypeRepository;
+    @Autowired
+    private OfferedServiceRepository offeredServiceRepository;
+    @Autowired
+    private VehicleTypeRepository vehicleTypeRepository;
+
+
+    @Autowired
+    private RoomServiceRepository roomServiceRepository;
 
     @Test
     public void whenFindByName_thenReturnHost() {
@@ -446,5 +464,87 @@ public class SimpleDBIntegrationTest extends DatabaseTest {
         assertThat(found.get(0).getEmail()).isEqualTo(reservation.getEmail());
 
     }
+
+    @Test
+    public void whenOfferedServiceFindName_thenReturn() {
+        ServiceTypeDMO serviceType = new ServiceTypeDMO();
+        serviceType.setName("Service 1");
+        this.serviceTypeRepository.save(serviceType);
+        ServiceTypeDMO foundService = this.serviceTypeRepository.findByName(serviceType.getName());
+
+        VehicleTypeDMO vehicleType = new VehicleTypeDMO();
+        vehicleType.setName("Car");
+        this.vehicleTypeRepository.save(vehicleType);
+        VehicleTypeDMO foundVehicle = this.vehicleTypeRepository.findByName("Car");
+
+        OfferedServiceDMO offeredService = new OfferedServiceDMO();
+        offeredService.setName("Service Name");
+        offeredService.setServiceType(foundService);
+        offeredService.setVehicleType(foundVehicle);
+        this.offeredServiceRepository.save(offeredService);
+
+        // when
+        OfferedServiceDMO found = this.offeredServiceRepository.findByName(offeredService.getName());
+        // then
+        assertThat(found.getServiceType().getName()).isEqualTo(foundService.getName());
+        assertThat(found.getVehicleType().getName()).isEqualTo(vehicleType.getName());
+
+    }
+
+    @Test
+    public void whenRoomServiceFindByRoomId_thenReturnOne() {
+        ServiceTypeDMO serviceType = new ServiceTypeDMO();
+        serviceType.setName("Service 1");
+        this.serviceTypeRepository.save(serviceType);
+        ServiceTypeDMO foundService = this.serviceTypeRepository.findByName(serviceType.getName());
+
+        VehicleTypeDMO vehicleType = new VehicleTypeDMO();
+        vehicleType.setName("Car");
+        this.vehicleTypeRepository.save(vehicleType);
+        VehicleTypeDMO foundVehicle = this.vehicleTypeRepository.findByName("Car");
+
+        OfferedServiceDMO offeredService = new OfferedServiceDMO();
+        offeredService.setName("Service Name");
+        offeredService.setServiceType(foundService);
+        offeredService.setVehicleType(foundVehicle);
+        this.offeredServiceRepository.save(offeredService);
+        OfferedServiceDMO foundOfferedService = this.offeredServiceRepository.findByName(offeredService.getName());
+
+
+        HostDMO host = new HostDMO();
+        host.setName("nikos");
+        host.setEmail("nikos@nikos.gr");
+        this.hostRepository.save(host);
+        HostDMO foundHost = hostRepository.findByName(host.getName());
+
+        HubDMO hubDMO = new HubDMO();
+        hubDMO.setHost(foundHost);
+        hubDMO.setName("HUB 1");
+        hubDMO.setLocation("location of hub");
+        this.hubRepository.save(hubDMO);
+
+        RoomDMO room = new RoomDMO();
+        room.setName("Room 1");
+        room.setNumberOfBeds(2);
+        HubDMO foundHub = hubRepository.findByName(hubDMO.getName());
+        room.setHub(foundHub);
+        this.roomRepository.save(room);
+
+        RoomDMO foundRoom = this.roomRepository.findByName(room.getName());
+
+
+        RoomServiceDMO roomServiceDMO = new RoomServiceDMO();
+        roomServiceDMO.setOfferedService(foundOfferedService);
+        roomServiceDMO.setRoom(foundRoom);
+        this.roomServiceRepository.save(roomServiceDMO);
+
+        // when
+       List<RoomServiceDMO> found = this.roomServiceRepository.findByRoomId(foundRoom.getId());
+        // then
+        assertThat(found.size()).isEqualTo(1);
+
+    }
+
+
 
 }

@@ -39,42 +39,42 @@ CREATE TABLE "reservation_status" (
 
 CREATE TABLE "employee" (
   "id" SERIAL PRIMARY KEY,
-  "Name" VARCHAR(50) NOT NULL,
-  "Email" VARCHAR(50) UNIQUE NOT NULL,
+  "name" VARCHAR(50) NOT NULL,
+  "email" VARCHAR(50) UNIQUE NOT NULL,
   "host_id" BIGINT NOT NULL,
-  "Type" INTEGER NOT NULL,
-  "PhoneNumber" VARCHAR(50) NOT NULL,
-  "HasVehicle" BOOLEAN NOT NULL,
-  "VehicleType" INTEGER NOT NULL
+  "type" INTEGER NOT NULL,
+  "phone_number" VARCHAR(50) NOT NULL,
+  "has_vehicle" BOOLEAN NOT NULL,
+  "vehicle_type" INTEGER NOT NULL
 );
 
 CREATE TABLE "employee_type" (
   "id" SERIAL PRIMARY KEY,
-  "Name" VARCHAR
+  "name" VARCHAR
 );
 
 CREATE TABLE "vehicle_type" (
   "id" SERIAL PRIMARY KEY,
-  "Name" VARCHAR
+  "name" VARCHAR
 );
 
 CREATE TABLE "task_assignment" (
   "id" SERIAL PRIMARY KEY,
-  "Requestid" BIGINT NOT NULL,
-  "Employeeid" INTEGER NOT NULL,
+  "request_id" BIGINT NOT NULL,
+  "employee_id" INTEGER NOT NULL,
   "status" INTEGER NOT NULL
 );
 
-CREATE TABLE "service" (
+CREATE TABLE "offered_service" (
   "id" SERIAL PRIMARY KEY,
-  "ServiceType" INTEGER NOT NULL,
-  "Name" VARCHAR(50) NOT NULL,
-  "VehicleType" INTEGER NOT NULL
+  "service_type" INTEGER NOT NULL,
+  "name" VARCHAR(50) NOT NULL,
+  "vehicle_type" INTEGER NOT NULL
 );
 
 CREATE TABLE "service_type" (
   "id" SERIAL PRIMARY KEY,
-  "Name" VARCHAR
+  "name" VARCHAR
 );
 
 CREATE TABLE "assignment_status" (
@@ -84,21 +84,21 @@ CREATE TABLE "assignment_status" (
 
 CREATE TABLE "request" (
   "id" SERIAL PRIMARY KEY,
-  "Reservationid" BIGINT NOT NULL,
-  "Email" VARCHAR(150) NOT NULL,
-  "Serviceid" INTEGER NOT NULL
+  "reservation_id" BIGINT NOT NULL,
+  "email" VARCHAR(150) NOT NULL,
+  "service_id" INTEGER NOT NULL
 );
 
 CREATE TABLE "room_services" (
   "id" SERIAL PRIMARY KEY,
-  "Roomid" INTEGER NOT NULL,
-  "Serviceid" INTEGER NOT NULL
+  "room_id" INTEGER NOT NULL,
+  "service_id" INTEGER NOT NULL
 );
 
 CREATE TABLE "host_services" (
   "id" SERIAL PRIMARY KEY,
   "host_id" BIGINT NOT NULL,
-  "Type" INTEGER NOT NULL,
+  "type" INTEGER NOT NULL,
   "Name" VARCHAR(50) NOT NULL
 );
 
@@ -112,26 +112,26 @@ ALTER TABLE "reservation" ADD FOREIGN KEY ("status") REFERENCES "reservation_sta
 
 ALTER TABLE "employee" ADD FOREIGN KEY ("host_id") REFERENCES "host" ("id");
 
-ALTER TABLE "employee" ADD FOREIGN KEY ("Type") REFERENCES "employee_type" ("id");
+ALTER TABLE "employee" ADD FOREIGN KEY ("type") REFERENCES "employee_type" ("id");
 
-ALTER TABLE "employee" ADD FOREIGN KEY ("VehicleType") REFERENCES "vehicle_type" ("id");
+ALTER TABLE "employee" ADD FOREIGN KEY ("vehicle_type") REFERENCES "vehicle_type" ("id");
 
-ALTER TABLE "task_assignment" ADD FOREIGN KEY ("Requestid") REFERENCES "request" ("id");
+ALTER TABLE "task_assignment" ADD FOREIGN KEY ("request_id") REFERENCES "request" ("id");
 
-ALTER TABLE "task_assignment" ADD FOREIGN KEY ("Employeeid") REFERENCES "employee" ("id");
+ALTER TABLE "task_assignment" ADD FOREIGN KEY ("employee_id") REFERENCES "employee" ("id");
 
 ALTER TABLE "task_assignment" ADD FOREIGN KEY ("status") REFERENCES "assignment_status" ("id");
 
-ALTER TABLE "service" ADD FOREIGN KEY ("ServiceType") REFERENCES "service_type" ("id");
+ALTER TABLE "offered_service" ADD FOREIGN KEY ("service_type") REFERENCES "service_type" ("id");
 
-ALTER TABLE "service" ADD FOREIGN KEY ("VehicleType") REFERENCES "vehicle_type" ("id");
+ALTER TABLE "offered_service" ADD FOREIGN KEY ("vehicle_type") REFERENCES "vehicle_type" ("id");
 
-ALTER TABLE "request" ADD FOREIGN KEY ("Reservationid") REFERENCES "reservation" ("id");
+ALTER TABLE "request" ADD FOREIGN KEY ("reservation_id") REFERENCES "reservation" ("id");
 
-ALTER TABLE "request" ADD FOREIGN KEY ("Serviceid") REFERENCES "service" ("id");
+ALTER TABLE "request" ADD FOREIGN KEY ("service_id") REFERENCES "offered_service" ("id");
 
-ALTER TABLE "room_services" ADD FOREIGN KEY ("Roomid") REFERENCES "room" ("id");
+ALTER TABLE "room_services" ADD FOREIGN KEY ("room_id") REFERENCES "room" ("id");
 
-ALTER TABLE "room_services" ADD FOREIGN KEY ("Serviceid") REFERENCES "service" ("id");
+ALTER TABLE "room_services" ADD FOREIGN KEY ("service_id") REFERENCES "offered_service" ("id");
 
 ALTER TABLE "host_services" ADD FOREIGN KEY ("host_id") REFERENCES "host" ("id");
