@@ -4,25 +4,19 @@ import com.alonisos.roomApp.model.host.HostDMO;
 import com.alonisos.roomApp.model.host.HostRepository;
 import com.alonisos.roomApp.model.hub.HubDMO;
 import com.alonisos.roomApp.model.hub.HubRepository;
+import com.alonisos.roomApp.model.room.RoomDMO;
+import com.alonisos.roomApp.model.room.RoomRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.support.TestPropertySourceUtils;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Testcontainers
+
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ContextConfiguration(initializers = HostRepositoryIntegrationTest.DataSourceInitializer.class)
-public class HostRepositoryIntegrationTest {
+public class HostRepositoryIntegrationTest extends DatabaseTest {
 
 
     @Autowired
@@ -31,23 +25,9 @@ public class HostRepositoryIntegrationTest {
     @Autowired
     private HubRepository hubRepository;
 
+    @Autowired
+    private RoomRepository roomRepository;
 
-    @Container
-    private static final PostgreSQLContainer<?> database = new PostgreSQLContainer<>("postgres:12.9-alpine")
-            .withInitScript("test-schema.sql");
-
-    public static class DataSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-
-        @Override
-        public void initialize(ConfigurableApplicationContext applicationContext) {
-            TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
-                    applicationContext,
-                    "spring.datasource.url=" + database.getJdbcUrl(),
-                    "spring.datasource.username=" + database.getUsername(),
-                    "spring.datasource.password=" + database.getPassword()
-            );
-        }
-    }
 
 
     @Test
@@ -67,7 +47,7 @@ public class HostRepositoryIntegrationTest {
     }
 
     @Test
-    public void whenFindByName_thenReturnHub(){
+    public void whenFindByName_thenReturnHub() {
         HostDMO host = new HostDMO();
         host.setName("nikos");
         host.setEmail("nikos@nikos.gr");
@@ -84,6 +64,38 @@ public class HostRepositoryIntegrationTest {
         // then
         assertThat(found.getName())
                 .isEqualTo(hubDMO.getName());
+    }
+
+    @Test
+    public void whenFindByName_thenRoom() {
+        HostDMO host = new HostDMO();
+        host.setName("nikos");
+        host.setEmail("nikos@nikos.gr");
+        this.hostRepository.save(host);
+        HostDMO foundHost = hostRepository.findByName(host.getName());
+
+        HubDMO hubDMO = new HubDMO();
+        hubDMO.setHost(foundHost);
+        hubDMO.setName("HUB 1");
+        hubDMO.setLocation("location of hub");
+        this.hubRepository.save(hubDMO);
+
+        RoomDMO room = new RoomDMO();
+        room.setName("Room 1");
+        room.setNumberOfBeds(2);
+        HubDMO foundHub = hubRepository.findByName(hubDMO.getName());
+        room.setHub(foundHub);
+        this.roomRepository.save(room);
+        // when
+        RoomDMO found = this.roomRepository.findByName(room.getName());
+        // then
+        assertThat(found.getName())
+                .isEqualTo(room.getName());
+
+        assertThat(found.getHub().getName()).isEqualTo(foundHub.getName());
+        assertThat(found.getHub().getHost().getName()).isEqualTo(host.getName());
 
     }
+
+
 }
