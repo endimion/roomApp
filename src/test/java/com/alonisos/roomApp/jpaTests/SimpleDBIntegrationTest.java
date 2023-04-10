@@ -16,6 +16,8 @@ import com.alonisos.roomApp.model.room.RoomDMO;
 import com.alonisos.roomApp.model.room.RoomRepository;
 import com.alonisos.roomApp.model.roomService.RoomServiceDMO;
 import com.alonisos.roomApp.model.roomService.RoomServiceRepository;
+import com.alonisos.roomApp.model.serviceRequest.ServiceRequestDMO;
+import com.alonisos.roomApp.model.serviceRequest.ServiceRequestRepository;
 import com.alonisos.roomApp.model.vehicle.VehicleTypeDMO;
 import com.alonisos.roomApp.model.vehicle.VehicleTypeRepository;
 import org.junit.jupiter.api.Test;
@@ -60,6 +62,9 @@ public class SimpleDBIntegrationTest extends DatabaseTest {
 
     @Autowired
     private RoomServiceRepository roomServiceRepository;
+
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
     @Test
     public void whenFindByName_thenReturnHost() {
@@ -545,6 +550,91 @@ public class SimpleDBIntegrationTest extends DatabaseTest {
 
     }
 
+
+    @Test
+    public void whenServiceRequestFindByRoomId_thenReturnOne() {
+        ServiceTypeDMO serviceType = new ServiceTypeDMO();
+        serviceType.setName("Service 1");
+        this.serviceTypeRepository.save(serviceType);
+        ServiceTypeDMO foundService = this.serviceTypeRepository.findByName(serviceType.getName());
+
+        VehicleTypeDMO vehicleType = new VehicleTypeDMO();
+        vehicleType.setName("Car");
+        this.vehicleTypeRepository.save(vehicleType);
+        VehicleTypeDMO foundVehicle = this.vehicleTypeRepository.findByName("Car");
+
+        OfferedServiceDMO offeredService = new OfferedServiceDMO();
+        offeredService.setName("Service Name");
+        offeredService.setServiceType(foundService);
+        offeredService.setVehicleType(foundVehicle);
+        this.offeredServiceRepository.save(offeredService);
+        OfferedServiceDMO foundOfferedService = this.offeredServiceRepository.findByName(offeredService.getName());
+
+
+        HostDMO host = new HostDMO();
+        host.setName("nikos");
+        host.setEmail("nikos@nikos.gr");
+        this.hostRepository.save(host);
+        HostDMO foundHost = hostRepository.findByName(host.getName());
+
+        HubDMO hubDMO = new HubDMO();
+        hubDMO.setHost(foundHost);
+        hubDMO.setName("HUB 1");
+        hubDMO.setLocation("location of hub");
+        this.hubRepository.save(hubDMO);
+
+        RoomDMO room = new RoomDMO();
+        room.setName("Room 1");
+        room.setNumberOfBeds(2);
+        HubDMO foundHub = hubRepository.findByName(hubDMO.getName());
+        room.setHub(foundHub);
+        this.roomRepository.save(room);
+
+        RoomDMO foundRoom = this.roomRepository.findByName(room.getName());
+
+        ReservationStatusDMO reservationStatus = new ReservationStatusDMO();
+        reservationStatus.setName("FREE");
+        this.reservationStatusRepository.save(reservationStatus);
+        ReservationStatusDMO foundStatus = this.reservationStatusRepository.findByName("FREE");
+
+        ReservationDMO reservation = new ReservationDMO();
+        reservation.setEmail("client@test.gr");
+        reservation.setBabies(0);
+        reservation.setRoom(foundRoom);
+        reservation.setChildren(0);
+        reservation.setPersons(2);
+        reservation.setStatus(foundStatus);
+
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = null;
+        try {
+            date = new Date(formatter.parse("20-10-2023").getTime());
+            reservation.setTrueCheckOut(date);
+            reservation.setCheckIn(date);
+            reservation.setCheckOut(date);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        this.reservationRepository.save(reservation);
+
+        ReservationDMO foundReservation = this.reservationRepository.findByEmail(reservation.getEmail());
+
+        ServiceRequestDMO serviceRequest = new ServiceRequestDMO();
+        serviceRequest.setOfferedService(foundOfferedService);
+        serviceRequest.setReservation(foundReservation);
+        serviceRequest.setEmail("client@test.gr");
+        this.serviceRequestRepository.save(serviceRequest);
+
+
+
+        // when
+        List<ServiceRequestDMO> found = this.serviceRequestRepository.findAllByRoomId(foundRoom.getId());
+        // then
+        assertThat(found.size()).isEqualTo(1);
+
+    }
 
 
 }
