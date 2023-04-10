@@ -7,7 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Room")
+@Table(name = "room")
 @Getter
 @Setter
 public class RoomDMO {

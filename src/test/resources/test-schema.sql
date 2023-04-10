@@ -20,21 +20,21 @@ CREATE TABLE "room" (
 
 CREATE TABLE "reservation" (
   "id" SERIAL PRIMARY KEY,
-  "Roomid" INTEGER NOT NULL,
-  "Email" VARCHAR(50) NOT NULL,
-  "CheckIn" DATE NOT NULL,
-  "CheckOut" DATE NOT NULL,
-  "Persons" INTEGER NOT NULL,
-  "Children" INTEGER NOT NULL,
-  "Babies" INTEGER NOT NULL,
-  "Status" INTEGER NOT NULL,
-  "TrueCheckIn" DATE,
-  "TrueCheckOut" DATE
+  "room_id" INTEGER NOT NULL,
+  "email" VARCHAR(50) NOT NULL,
+  "check_in" DATE NOT NULL,
+  "check_out" DATE NOT NULL,
+  "persons" INTEGER NOT NULL,
+  "children" INTEGER NOT NULL,
+  "babies" INTEGER NOT NULL,
+  "status" INTEGER NOT NULL,
+  "true_check_in" DATE,
+  "true_check_out" DATE
 );
 
-CREATE TABLE "reservationStatus" (
+CREATE TABLE "reservation_status" (
   "id" SERIAL PRIMARY KEY,
-  "Name" VARCHAR
+  "name" VARCHAR
 );
 
 CREATE TABLE "employee" (
@@ -62,7 +62,7 @@ CREATE TABLE "task_assignment" (
   "id" SERIAL PRIMARY KEY,
   "Requestid" BIGINT NOT NULL,
   "Employeeid" INTEGER NOT NULL,
-  "Status" INTEGER NOT NULL
+  "status" INTEGER NOT NULL
 );
 
 CREATE TABLE "service" (
@@ -79,7 +79,7 @@ CREATE TABLE "service_type" (
 
 CREATE TABLE "assignment_status" (
   "id" SERIAL PRIMARY KEY,
-  "Status" VARCHAR
+  "status" VARCHAR
 );
 
 CREATE TABLE "request" (
@@ -106,9 +106,9 @@ ALTER TABLE "hub" ADD FOREIGN KEY ("host_id") REFERENCES "host" ("id");
 
 ALTER TABLE "room" ADD FOREIGN KEY ("hub_id") REFERENCES "hub" ("id");
 
-ALTER TABLE "reservation" ADD FOREIGN KEY ("Roomid") REFERENCES "room" ("id");
+ALTER TABLE "reservation" ADD FOREIGN KEY ("room_id") REFERENCES "room" ("id");
 
-ALTER TABLE "reservation" ADD FOREIGN KEY ("Status") REFERENCES "reservationStatus" ("id");
+ALTER TABLE "reservation" ADD FOREIGN KEY ("status") REFERENCES "reservation_status" ("id");
 
 ALTER TABLE "employee" ADD FOREIGN KEY ("host_id") REFERENCES "host" ("id");
 
@@ -120,7 +120,7 @@ ALTER TABLE "task_assignment" ADD FOREIGN KEY ("Requestid") REFERENCES "request"
 
 ALTER TABLE "task_assignment" ADD FOREIGN KEY ("Employeeid") REFERENCES "employee" ("id");
 
-ALTER TABLE "task_assignment" ADD FOREIGN KEY ("Status") REFERENCES "assignment_status" ("id");
+ALTER TABLE "task_assignment" ADD FOREIGN KEY ("status") REFERENCES "assignment_status" ("id");
 
 ALTER TABLE "service" ADD FOREIGN KEY ("ServiceType") REFERENCES "service_type" ("id");
 
