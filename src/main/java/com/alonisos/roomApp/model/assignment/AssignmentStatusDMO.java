@@ -1,4 +1,4 @@
-package com.alonisos.roomApp.model.employee;
+package com.alonisos.roomApp.model.assignment;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,19 +8,17 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "EmployeeType")
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "assignment_status")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class EmployeeTypeDMO {
-
+public class AssignmentStatusDMO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "serial")
     private Long id;
-    @Column(name = "name")
-    private String name;
 
-    // Constructors, getters, and setters
+    @Column(name = "status", nullable = false, length = 200)
+    private String status;
 }

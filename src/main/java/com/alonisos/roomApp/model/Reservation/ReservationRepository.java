@@ -14,11 +14,9 @@ public interface ReservationRepository extends JpaRepository<ReservationDMO, Str
 
     ReservationDMO findByRoom(RoomDMO room);
 
-    //TBD find by hub
     @Query("SELECT r FROM ReservationDMO r JOIN r.room rm JOIN rm.hub h  WHERE h.id = :hubId")
     List<ReservationDMO> findAllByHubId(Long hubId);
 
-    //TBD find by host
     @Query("SELECT r FROM ReservationDMO r JOIN r.room rm JOIN rm.hub h JOIN h.host ho WHERE ho.id = :hostId")
     List<ReservationDMO> findAllByHostId(Long hostId);
 

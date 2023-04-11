@@ -62,7 +62,7 @@ CREATE TABLE "task_assignment" (
   "id" SERIAL PRIMARY KEY,
   "request_id" BIGINT NOT NULL,
   "employee_id" INTEGER NOT NULL,
-  "status" INTEGER NOT NULL
+  "status_id" INTEGER NOT NULL
 );
 
 CREATE TABLE "offered_service" (
@@ -120,7 +120,7 @@ ALTER TABLE "task_assignment" ADD FOREIGN KEY ("request_id") REFERENCES "request
 
 ALTER TABLE "task_assignment" ADD FOREIGN KEY ("employee_id") REFERENCES "employee" ("id");
 
-ALTER TABLE "task_assignment" ADD FOREIGN KEY ("status") REFERENCES "assignment_status" ("id");
+ALTER TABLE "task_assignment" ADD FOREIGN KEY ("status_id") REFERENCES "assignment_status" ("id");
 
 ALTER TABLE "offered_service" ADD FOREIGN KEY ("service_type") REFERENCES "service_type" ("id");
 

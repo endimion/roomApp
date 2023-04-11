@@ -1,38 +1,51 @@
 package com.alonisos.roomApp.model.employee;
 
 import com.alonisos.roomApp.model.Reservation.ReservationStatusDMO;
+import com.alonisos.roomApp.model.host.HostDMO;
+import com.alonisos.roomApp.model.vehicle.VehicleTypeDMO;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "Employee")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmployeeDMO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "serial")
     private Long id;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "Email", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "HostId", nullable = false)
-    private String hostId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "host_id", nullable = false)
+    private HostDMO host;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "Type", nullable = false)
+    @JoinColumn(name = "type", nullable = false)
     private EmployeeTypeDMO type;
 
-    @Column(name = "PhoneNumber", nullable = false)
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "HasVehicle", nullable = false)
+    @Column(name = "has_vehicle", nullable = false)
     private Boolean hasVehicle;
 
-    @Column(name = "VehicleType", nullable = false)
-    private Integer vehicleType;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "vehicle_type", nullable = false)
+    private VehicleTypeDMO vehicleType;
 
     // Constructors, getters, and setters
 }
