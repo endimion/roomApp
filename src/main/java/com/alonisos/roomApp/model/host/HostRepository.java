@@ -9,4 +9,6 @@ public interface HostRepository extends JpaRepository<HostDMO, String>,
     HostDMO findByName(String name);
 
     HostDMO findByEmail(String email);
+
+
 }

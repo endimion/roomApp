@@ -7,7 +7,7 @@ import com.alonisos.roomApp.model.serviceRequest.ServiceRequestDMO;
 
 import java.util.List;
 
-public interface hubService {
+public interface HubService {
 
     public void saveHub(HubDMO hub);
 
@@ -19,6 +19,6 @@ public interface hubService {
 
     public List<ServiceRequestDMO> getRequestsPerHub(Long hubId);
 
-    public List<ReservationDMO> getReservationsPerHub(Long hubId);
+    public List<ReservationDMO> getReservationsPerHubAndHostEmail(Long hubId, String hostEmail);
 
 }
