@@ -1,6 +1,8 @@
 package com.alonisos.roomApp.service;
 
+import com.alonisos.roomApp.exceptions.DataNotFoundException;
 import com.alonisos.roomApp.model.Reservation.ReservationDMO;
+import com.alonisos.roomApp.model.Reservation.ReservationTO;
 import com.alonisos.roomApp.model.hub.HubDMO;
 import com.alonisos.roomApp.model.room.RoomDMO;
 import com.alonisos.roomApp.model.serviceRequest.ServiceRequestDMO;
@@ -19,6 +21,6 @@ public interface HubService {
 
     public List<ServiceRequestDMO> getRequestsPerHub(Long hubId);
 
-    public List<ReservationDMO> getReservationsPerHubAndHostEmail(Long hubId, String hostEmail);
+    public List<ReservationTO> getReservationsPerHubAndHostEmail(Long hubId, String hostEmail) throws DataNotFoundException;
 
 }

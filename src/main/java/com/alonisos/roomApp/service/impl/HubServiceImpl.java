@@ -1,7 +1,9 @@
 package com.alonisos.roomApp.service.impl;
 
+import com.alonisos.roomApp.exceptions.DataNotFoundException;
 import com.alonisos.roomApp.model.Reservation.ReservationDMO;
 import com.alonisos.roomApp.model.Reservation.ReservationRepository;
+import com.alonisos.roomApp.model.Reservation.ReservationTO;
 import com.alonisos.roomApp.model.host.HostDMO;
 import com.alonisos.roomApp.model.host.HostRepository;
 import com.alonisos.roomApp.model.hub.HubDMO;
@@ -9,6 +11,7 @@ import com.alonisos.roomApp.model.hub.HubRepository;
 import com.alonisos.roomApp.model.room.RoomDMO;
 import com.alonisos.roomApp.model.serviceRequest.ServiceRequestDMO;
 import com.alonisos.roomApp.service.HubService;
+import com.alonisos.roomApp.utils.wrappers.ReservationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +26,15 @@ public class HubServiceImpl implements HubService {
     private final HostRepository hostRepository;
     private final ReservationRepository reservationRepository;
 
+    private  ReservationMapper reservationMapper;
+
     @Autowired
-    public HubServiceImpl(HubRepository hubRepository, HostRepository hostRepository, ReservationRepository reservationRepository) {
+    public HubServiceImpl(HubRepository hubRepository, HostRepository hostRepository,
+                          ReservationRepository reservationRepository, ReservationMapper reservationMapper) {
         this.hubRepository = hubRepository;
         this.hostRepository = hostRepository;
         this.reservationRepository = reservationRepository;
+        this.reservationMapper = reservationMapper;
     }
 
     @Override
@@ -61,13 +68,17 @@ public class HubServiceImpl implements HubService {
     }
 
     @Override
-    public List<ReservationDMO> getReservationsPerHubAndHostEmail(Long hubId, String hostEmail) {
+    public List<ReservationTO> getReservationsPerHubAndHostEmail(Long hubId, String hostEmail) {
         HostDMO host = this.hostRepository.findByEmail(hostEmail);
         if (host != null) {
-            return this.reservationRepository.findAllByHostId(host.getId()).stream().filter(reservationDMO -> {
-                return reservationDMO.getRoom().getHub().getId().equals(hubId);
-            }).collect(Collectors.toList());
+            List<ReservationTO> result =  this.reservationRepository.findAllByHostId(host.getId()).stream().filter(reservationDMO ->
+                    reservationDMO.getRoom().getHub().getId().equals(hubId))
+                    .map(this.reservationMapper::toTO)
+                    .collect(Collectors.toList());
+            if(!result.isEmpty()){
+                return result;
+            }
         }
-        return null;
+       throw new DataNotFoundException("Could not find reservations for  host " + hostEmail + " and hub " + hubId);
     }
 }
