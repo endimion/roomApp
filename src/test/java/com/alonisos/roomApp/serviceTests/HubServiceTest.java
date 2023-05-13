@@ -1,7 +1,7 @@
 package com.alonisos.roomApp.serviceTests;
+
 import com.alonisos.roomApp.exceptions.DataNotFoundException;
 import com.alonisos.roomApp.model.Reservation.ReservationDMO;
-import com.alonisos.roomApp.model.Reservation.ReservationStatusDMO;
 import com.alonisos.roomApp.model.Reservation.ReservationRepository;
 import com.alonisos.roomApp.model.Reservation.ReservationTO;
 import com.alonisos.roomApp.model.host.HostDMO;
@@ -22,17 +22,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class HubServiceTest {

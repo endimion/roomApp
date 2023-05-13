@@ -1,137 +1,140 @@
-CREATE TABLE "public.Host" (
-  "Id" BIGINT PRIMARY KEY,
-  "Name" VARCHAR(50) NOT NULL,
-  "Email" VARCHAR(50) UNIQUE NOT NULL
+CREATE DATABASE room;
+\c room
+
+CREATE TABLE "host" (
+  "id"  SERIAL PRIMARY KEY NOT NULL,
+  "name" VARCHAR(50) NOT NULL,
+  "email" VARCHAR(50) UNIQUE NOT NULL
 );
 
-CREATE TABLE "public.Hub" (
-  "Id" BIGINT PRIMARY KEY,
-  "HostId" BIGINT NOT NULL,
-  "Name" VARCHAR(50) NOT NULL,
-  "Location" VARCHAR(200) NOT NULL
+CREATE TABLE "hub" (
+  "id" SERIAL PRIMARY KEY,
+  "host_id" BIGINT NOT NULL,
+  "name" VARCHAR(50) NOT NULL,
+  "location" VARCHAR(200) NOT NULL
 );
 
-CREATE TABLE "public.Room" (
-  "Id" BIGINT PRIMARY KEY,
-  "HubId" INTEGER NOT NULL,
-  "Name" VARCHAR(50) NOT NULL,
-  "NumberOfBeds" INTEGER NOT NULL
+CREATE TABLE "room" (
+  "id" SERIAL PRIMARY KEY,
+  "hub_id" INTEGER NOT NULL,
+  "name" VARCHAR(50) NOT NULL,
+  "number_of_beds" INTEGER NOT NULL
 );
 
-CREATE TABLE "public.Reservation" (
-  "Id" BIGINT PRIMARY KEY,
-  "RoomId" INTEGER NOT NULL,
-  "Email" VARCHAR(50) NOT NULL,
-  "CheckIn" DATE NOT NULL,
-  "CheckOut" DATE NOT NULL,
-  "Persons" INTEGER NOT NULL,
-  "Children" INTEGER NOT NULL,
-  "Babies" INTEGER NOT NULL,
-  "Status" INTEGER NOT NULL,
-  "TrueCheckIn" DATE,
-  "TrueCheckOut" DATE
+CREATE TABLE "reservation" (
+  "id" SERIAL PRIMARY KEY,
+  "room_id" INTEGER NOT NULL,
+  "email" VARCHAR(50) NOT NULL,
+  "check_in" DATE NOT NULL,
+  "check_out" DATE NOT NULL,
+  "persons" INTEGER NOT NULL,
+  "children" INTEGER NOT NULL,
+  "babies" INTEGER NOT NULL,
+  "status" INTEGER NOT NULL,
+  "true_check_in" DATE,
+  "true_check_out" DATE
 );
 
-CREATE TABLE "public.ReservationStatus" (
-  "Id" BIGINT PRIMARY KEY,
-  "Name" VARCHAR
+CREATE TABLE "reservation_status" (
+  "id" SERIAL PRIMARY KEY,
+  "name" VARCHAR
 );
 
-CREATE TABLE "public.Employee" (
-  "Id" BIGINT PRIMARY KEY,
-  "Name" VARCHAR(50) NOT NULL,
-  "Email" VARCHAR(50) UNIQUE NOT NULL,
-  "HostId" BIGINT NOT NULL,
-  "Type" INTEGER NOT NULL,
-  "PhoneNumber" VARCHAR(50) NOT NULL,
-  "HasVehicle" BOOLEAN NOT NULL,
-  "VehicleType" INTEGER NOT NULL
+CREATE TABLE "employee" (
+  "id" SERIAL PRIMARY KEY,
+  "name" VARCHAR(50) NOT NULL,
+  "email" VARCHAR(50) UNIQUE NOT NULL,
+  "host_id" BIGINT NOT NULL,
+  "type" INTEGER NOT NULL,
+  "phone_number" VARCHAR(50) NOT NULL,
+  "has_vehicle" BOOLEAN NOT NULL,
+  "vehicle_type" INTEGER NOT NULL
 );
 
-CREATE TABLE "public.EmployeeType" (
-  "Id" BIGINT PRIMARY KEY,
-  "Name" VARCHAR
+CREATE TABLE "employee_type" (
+  "id" SERIAL PRIMARY KEY,
+  "name" VARCHAR
 );
 
-CREATE TABLE "public.VehicleType" (
-  "Id" BIGINT PRIMARY KEY,
-  "Name" VARCHAR
+CREATE TABLE "vehicle_type" (
+  "id" SERIAL PRIMARY KEY,
+  "name" VARCHAR
 );
 
-CREATE TABLE "public.TaskAssignment" (
-  "Id" BIGINT PRIMARY KEY,
-  "RequestId" BIGINT NOT NULL,
-  "EmployeeId" INTEGER NOT NULL,
-  "Status" INTEGER NOT NULL
+CREATE TABLE "task_assignment" (
+  "id" SERIAL PRIMARY KEY,
+  "request_id" BIGINT NOT NULL,
+  "employee_id" INTEGER NOT NULL,
+  "status_id" INTEGER NOT NULL
 );
 
-CREATE TABLE "public.Service" (
-  "Id" BIGINT PRIMARY KEY,
-  "ServiceType" INTEGER NOT NULL,
-  "Name" VARCHAR(50) NOT NULL,
-  "VehicleType" INTEGER NOT NULL
+CREATE TABLE "offered_service" (
+  "id" SERIAL PRIMARY KEY,
+  "service_type" INTEGER NOT NULL,
+  "name" VARCHAR(50) NOT NULL,
+  "vehicle_type" INTEGER NOT NULL
 );
 
-CREATE TABLE "public.ServiceType" (
-  "Id" BIGINT PRIMARY KEY,
-  "Name" VARCHAR
+CREATE TABLE "service_type" (
+  "id" SERIAL PRIMARY KEY,
+  "name" VARCHAR
 );
 
-CREATE TABLE "public.AssignmentStatus" (
-  "Id" BIGINT PRIMARY KEY,
-  "Status" VARCHAR
+CREATE TABLE "assignment_status" (
+  "id" SERIAL PRIMARY KEY,
+  "status" VARCHAR
 );
 
-CREATE TABLE "public.Request" (
-  "Id" BIGINT PRIMARY KEY,
-  "ReservationId" BIGINT NOT NULL,
-  "Email" VARCHAR(150) NOT NULL,
-  "ServiceId" INTEGER NOT NULL
+CREATE TABLE "request" (
+  "id" SERIAL PRIMARY KEY,
+  "reservation_id" BIGINT NOT NULL,
+  "email" VARCHAR(150) NOT NULL,
+  "service_id" INTEGER NOT NULL
 );
 
-CREATE TABLE "public.RoomServices" (
-  "Id" BIGINT PRIMARY KEY,
-  "RoomId" INTEGER NOT NULL,
-  "ServiceId" INTEGER NOT NULL
+CREATE TABLE "room_services" (
+  "id" SERIAL PRIMARY KEY,
+  "room_id" INTEGER NOT NULL,
+  "service_id" INTEGER NOT NULL
 );
 
-CREATE TABLE "public.HostServices" (
-  "Id" BIGINT PRIMARY KEY,
-  "HostId" BIGINT NOT NULL,
-  "Type" INTEGER NOT NULL,
+CREATE TABLE "host_services" (
+  "id" SERIAL PRIMARY KEY,
+  "host_id" BIGINT NOT NULL,
+  "type" INTEGER NOT NULL,
   "Name" VARCHAR(50) NOT NULL
 );
 
-ALTER TABLE "public.Hub" ADD FOREIGN KEY ("HostId") REFERENCES "public.Host" ("Id");
+ALTER TABLE "hub" ADD FOREIGN KEY ("host_id") REFERENCES "host" ("id");
 
-ALTER TABLE "public.Room" ADD FOREIGN KEY ("HubId") REFERENCES "public.Hub" ("Id");
+ALTER TABLE "room" ADD FOREIGN KEY ("hub_id") REFERENCES "hub" ("id");
 
-ALTER TABLE "public.Reservation" ADD FOREIGN KEY ("RoomId") REFERENCES "public.Room" ("Id");
+ALTER TABLE "reservation" ADD FOREIGN KEY ("room_id") REFERENCES "room" ("id");
 
-ALTER TABLE "public.Reservation" ADD FOREIGN KEY ("Status") REFERENCES "public.ReservationStatus" ("Id");
+ALTER TABLE "reservation" ADD FOREIGN KEY ("status") REFERENCES "reservation_status" ("id");
 
-ALTER TABLE "public.Employee" ADD FOREIGN KEY ("HostId") REFERENCES "public.Host" ("Id");
+ALTER TABLE "employee" ADD FOREIGN KEY ("host_id") REFERENCES "host" ("id");
 
-ALTER TABLE "public.Employee" ADD FOREIGN KEY ("Type") REFERENCES "public.EmployeeType" ("Id");
+ALTER TABLE "employee" ADD FOREIGN KEY ("type") REFERENCES "employee_type" ("id");
 
-ALTER TABLE "public.Employee" ADD FOREIGN KEY ("VehicleType") REFERENCES "public.VehicleType" ("Id");
+ALTER TABLE "employee" ADD FOREIGN KEY ("vehicle_type") REFERENCES "vehicle_type" ("id");
 
-ALTER TABLE "public.TaskAssignment" ADD FOREIGN KEY ("RequestId") REFERENCES "public.Request" ("ReservationId");
+ALTER TABLE "task_assignment" ADD FOREIGN KEY ("request_id") REFERENCES "request" ("id");
 
-ALTER TABLE "public.TaskAssignment" ADD FOREIGN KEY ("EmployeeId") REFERENCES "public.Employee" ("Id");
+ALTER TABLE "task_assignment" ADD FOREIGN KEY ("employee_id") REFERENCES "employee" ("id");
 
-ALTER TABLE "public.TaskAssignment" ADD FOREIGN KEY ("Status") REFERENCES "public.AssignmentStatus" ("Id");
+ALTER TABLE "task_assignment" ADD FOREIGN KEY ("status_id") REFERENCES "assignment_status" ("id");
 
-ALTER TABLE "public.Service" ADD FOREIGN KEY ("ServiceType") REFERENCES "public.ServiceType" ("Id");
+ALTER TABLE "offered_service" ADD FOREIGN KEY ("service_type") REFERENCES "service_type" ("id");
 
-ALTER TABLE "public.Service" ADD FOREIGN KEY ("VehicleType") REFERENCES "public.VehicleType" ("Id");
+ALTER TABLE "offered_service" ADD FOREIGN KEY ("vehicle_type") REFERENCES "vehicle_type" ("id");
 
-ALTER TABLE "public.Request" ADD FOREIGN KEY ("ReservationId") REFERENCES "public.Reservation" ("Id");
+ALTER TABLE "request" ADD FOREIGN KEY ("reservation_id") REFERENCES "reservation" ("id");
 
-ALTER TABLE "public.Request" ADD FOREIGN KEY ("ServiceId") REFERENCES "public.Service" ("Id");
+ALTER TABLE "request" ADD FOREIGN KEY ("service_id") REFERENCES "offered_service" ("id");
 
-ALTER TABLE "public.RoomServices" ADD FOREIGN KEY ("RoomId") REFERENCES "public.Room" ("Id");
+ALTER TABLE "room_services" ADD FOREIGN KEY ("room_id") REFERENCES "room" ("id");
 
-ALTER TABLE "public.RoomServices" ADD FOREIGN KEY ("ServiceId") REFERENCES "public.Service" ("Id");
+ALTER TABLE "room_services" ADD FOREIGN KEY ("service_id") REFERENCES "offered_service" ("id");
 
-ALTER TABLE "public.HostServices" ADD FOREIGN KEY ("HostId") REFERENCES "public.Host" ("Id");
+ALTER TABLE "host_services" ADD FOREIGN KEY ("host_id") REFERENCES "host" ("id");
