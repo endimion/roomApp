@@ -19,6 +19,7 @@
 		<version.lombok>1.18.26</version.lombok>
 		<version.mapstruct>1.5.5.Final</version.mapstruct>
 		<version.mapstruct-lombok>0.2.0</version.mapstruct-lombok>
+		<springfox-swagger.version>3.0.0</springfox-swagger.version>
 	</properties>
 
 	<dependencyManagement>
@@ -107,17 +108,16 @@
 		</dependency>
 
 		<!-- Open API -->
-		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-data-rest -->
+		<!-- swagger -->
 		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-data-rest</artifactId>
-			<version>1.7.0</version>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-boot-starter</artifactId>
+			<version>3.0.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.7.0</version>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${springfox-swagger.version}</version>
 		</dependency>
  		<!-- -->
 
